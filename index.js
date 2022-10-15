@@ -1,16 +1,21 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+app.use(cors());
+
 const http = require('http').Server(app);
 const PORT = 4000;
+
+if (!process.env.CLIENT_URL ) {
+    throw new Error('CLIENT_URL is not defined');
+}
 
 const socketIO = require('socket.io')(http, {
     cors: {
         origin: process.env.CLIENT_URL,
     }
 });
-
-app.use(cors());
 
 socketIO.on('connection', (socket) => {
     console.log(`⚡: ${socket.id} user just connected!`);
@@ -20,12 +25,10 @@ socketIO.on('connection', (socket) => {
 });
 
 
-app.get('/api', (req, res) => {
-  res.json({
-    message: 'Hello world',
-  });
+app.get("/api", (req, res) => {
+    res.json({ message: "Hello" })
 });
 
 http.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+    console.log(`Server listening on ${PORT}`);
 });
